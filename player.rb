@@ -40,5 +40,18 @@ class Player
     @cards.each { |card| puts '#{card}'}
   end
 
+  # метод взятия карты с колоды
+  def cards_take(deck)
+    @cards << deck.cards.pop
+    cards_show
+  end
+  
+  # метод ставки
+  def make_bet
+    @money -= BET
+  end
+end
+
+
 
 
