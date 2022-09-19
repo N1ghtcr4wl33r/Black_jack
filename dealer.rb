@@ -1,14 +1,15 @@
 require_relative 'player'
 
 class Dealer < Player
-  def show_cards
-    puts '#{self.name}: '
-    puts @cards.size
+  def cards_show
+    puts '#{self.name} карты: '
+    puts '*' * cards.size
   end
 
   # метод вскрытия карт
-  def open_cards
-    puts '#{self.name}: '
-    @cards.each { |card| puts '#{card}' }
+  def cards_open
+    puts '#{self.name} карты: '
+    cards.each { |card| print '#{card}' }
+    puts 'Очки: #{self.score}'
   end
 end

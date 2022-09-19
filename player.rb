@@ -1,7 +1,8 @@
 require_relative 'card'
 
 class Player
-  attr_reader :name, :money, :cards
+  attr_reader :name
+  attr_accessor :money, :cards
 
   BUDGET = 100
   BET = 10
@@ -35,20 +36,28 @@ class Player
     score
   end
 
-  def cards_show
-    puts '#{self.name}: '
-    @cards.each { |card| puts '#{card}'}
-  end
-
   # метод взятия карты с колоды
-  def cards_take(deck)
-    @cards << deck.cards.pop
-    cards_show
+  def cards_take(card)
+    cards << card
   end
   
-  # метод ставки
-  def make_bet
-    @money -= BET
+  # методы определения количества очков игрока
+  def score_normal
+    score <= 21
+  end
+
+  def score_over?
+    score > 21
+  end
+
+  # метод проверки отсутствия финансов у игрока
+  def no_money
+    money == 0
+  end
+
+  # метод определения числа карт игрока
+  def cards_count?
+    cards.size < 3
   end
 end
 
