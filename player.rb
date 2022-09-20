@@ -43,11 +43,11 @@ class Player
   
   # методы определения количества очков игрока
   def score_normal
-    score <= 21
+    cards_score <= 21
   end
 
   def score_over?
-    score > 21
+    cards_score > 21
   end
 
   # метод проверки отсутствия финансов у игрока
