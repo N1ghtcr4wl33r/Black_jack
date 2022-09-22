@@ -17,7 +17,11 @@ class Blackjack
   attr_accessor :current_player, :moves
 
   def initialize
-    @bank, @dealer = Bank.new, Dealer.new('Дилер')
+    @bank = Bank.new
+    @dealer = Dealer.new('Дилер')
+    puts 'Данный проект представляет из себя абстракцию популярной карточной игры'
+    puts 'Black Jack. Ваша задача - обыграть дилера, набрав большее число очков,'
+    puts 'но не более 21. Удачи;)'
     puts 'Введите Ваше имя:'
     @player = User.new(input)
     @players = []
@@ -33,11 +37,11 @@ class Blackjack
   end
 
   def switch_player
-    if current_player.eql?(player)
-      @current_player = dealer
-    else
-      @current_player = player
-    end
+    @current_player = if current_player.eql?(player)
+                        dealer
+                      else
+                        player
+                      end
   end
 
   # метод определения числа пропусков хода
@@ -46,17 +50,17 @@ class Blackjack
       switch_player
       @moves += 1
     else
-      raise ArgumentError, "Вы не можете пропустить ход. Выберите другую команду"
+      raise ArgumentError, 'Вы не можете пропустить ход. Выберите другую команду'
     end
   end
 
   def take_cards
-    players.each {|plr| 2.times {plr.cards_take(deck.cards.pop)}}
+    players.each { |plr| 2.times { plr.cards_take(deck.cards.pop) } }
   end
 
   # метод первой ставки игроками
   def first_bet
-    players.each {|plr| plr.bet}
+    players.each { |plr| plr.bet }
   end
 
   # метод пополнения банка
@@ -69,7 +73,7 @@ class Blackjack
   end
 
   def intro
-    puts "Добро пожаловать в игру Black Jack!"
+    puts 'Добро пожаловать в игру Black Jack!'
   end
 
   def start
@@ -85,7 +89,7 @@ class Blackjack
 
   def black_jack
     loop do
-      players.each {|plr| plr.cards_show}
+      players.each { |plr| plr.cards_show }
       dealer_move if current_player.eql?(dealer)
       open_cards if open_time?
       choice(ACTIONS)
@@ -93,13 +97,15 @@ class Blackjack
       when 1 then check_player
       when 2 then add_card
       when 3 then open_cards
-      when 4 then exit
+      when 4 then ending
+                  exit
       else
-        raise ArgumentError, "Команда введена неправильно. Используйте номер команды от 1 до 4"
+        raise ArgumentError, 'Команда введена неправильно. Используйте номер команды от 1 до 4'
       end
     end
   rescue ArgumentError => e
     p "Ошибка: #{e.message}"
+    puts '-------' * 10
     retry
   end
 
@@ -109,7 +115,7 @@ class Blackjack
       @moves += 1
       switch_player
     else
-      raise ArgumentError, "Вы не можете взять карту. Выберите другую команду"
+      raise ArgumentError, 'Вы не можете взять карту. Выберите другую команду'
     end
   end
 
@@ -135,11 +141,11 @@ class Blackjack
   end
 
   def winner_plr
-    (dealer.score_over? && player.score_normal) || ((player.cards_score > dealer.cards_score) && (player.score_normal))
+    (dealer.score_over? && player.score_normal) || ((player.cards_score > dealer.cards_score) && player.score_normal)
   end
 
   def winner_dlr
-    (player.score_over? && dealer.score_normal) || ((dealer.cards_score > player.cards_score) && (dealer.score_normal))
+    (player.score_over? && dealer.score_normal) || ((dealer.cards_score > player.cards_score) && dealer.score_normal)
   end
 
   def draw
@@ -148,41 +154,57 @@ class Blackjack
 
   def winner_is
     if winner_plr
+      puts
       puts "#{player.name} выиграл!"
       player.money += bank.value
     elsif winner_dlr
+      puts
       puts "#{dealer.name} выиграл!"
       dealer.money += bank.value
     elsif draw
-      puts "Ничья!"
-      players.each {|plr| plr.money += bank.value/2}
+      puts
+      puts 'Ничья!'
+      players.each { |plr| plr.money += bank.value / 2 }
     end
-
+    puts
+    balance
+    puts
     restart
   end
 
+  def balance
+    puts "Баланс игроков: #{player.name} - #{player.money}$, #{dealer.name} - #{dealer.money}$"
+  end
+
   def ending
-    puts "Игра завершена со счетом #{player.name}: #{player.money}, #{dealer.name}: #{dealer.money}"
+    puts "Игра завершена со счетом #{player.name}: #{player.money}$, #{dealer.name}: #{dealer.money}$"
+    puts '-------' * 10
   end
 
   def restart
-    puts "Попробуете еще раз? Введите 1 для продолжения, 0 для завершения игры"
+    puts 'Попробуете еще раз? Введите 1 для продолжения или любой другой символ для завершения игры'
     input = gets.chomp.to_i
-    if input = 1 && !lose
-      players.each {|plr| plr.cards = []}
-      bank.value = 0
-      start
-    elsif lose
-      player_lose = players.select {|plr| plr.money.zero?}
-      puts "У игрока #{player_lose.first.name} недостаточно финансов для продолжения игры!"
-      ending
+    case input
+    when 1
+      if !lose
+        players.each { |plr| plr.cards = [] }
+        bank.value = 0
+        start
+      else
+        player_lose = players.select { |plr| plr.money.zero? }
+        puts "У игрока #{player_lose.first.name} недостаточно финансов для продолжения игры!"
+        puts
+        ending
+        exit
+      end
     else
       ending
+      exit
     end
   end
 
   def lose
-    players.map {|plr| plr.no_money}.include?(true)
+    players.map { |plr| plr.no_money }.include?(true)
   end
 end
 

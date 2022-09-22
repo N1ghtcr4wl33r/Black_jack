@@ -6,7 +6,7 @@ class Player
 
   BUDGET = 100
   BET = 10
-  
+
   def initialize(name)
     @name = name
     @money = BUDGET
@@ -21,16 +21,16 @@ class Player
   def cards_score
     score = 0
     cards.each do |card|
-    score +=
-      if card.ace?
-        11
-      elsif card.pic?
-        10
-      else
-        card.value
-      end
+      score +=
+        if card.ace?
+          11
+        elsif card.pic?
+          10
+        else
+          card.value
+        end
     end
-    cards.select { |card| card.ace?}.size.times do
+    cards.select { |card| card.ace? }.size.times do
       score -= 10 if score > 21
     end
     score
@@ -40,7 +40,7 @@ class Player
   def cards_take(card)
     cards << card
   end
-  
+
   # методы определения количества очков игрока
   def score_normal
     cards_score <= 21
@@ -60,7 +60,3 @@ class Player
     cards.size < 3
   end
 end
-
-
-
-
